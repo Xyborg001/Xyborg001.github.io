@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Your Name] - 学术主页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2D3748',
+                        secondary: '#4A5568',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+        }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .lang-zh {
+            display: none;
+        }
+        
+        .active-lang {
+            display: block;
+        }
+        
+        .inactive-lang {
+            display: none;
+        }
+        
+        .section-fade {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .section-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .course-item, .news-card {
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        
+        .course-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .news-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-container {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .play-button {
+            width: 16%;
+            height: 28%;
+            background-color: rgba(0, 0, 0, 0.7);
+            clip-path: polygon(0 0, 100% 50%, 0 100%);
+            transition: transform 0.2s ease;
+        }
+        
+        .video-container:hover .play-button {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="#" class="text-lg font-semibold text-primary">
+                    <span class="lang-en">[Your Name]</span>
+                    <span class="lang-zh">[你的名字]</span>
+                </a>
+                
+                <!-- Language switch -->
+                <div class="hidden md:block mr-8">
+                    <button id="lang-en-btn" class="text-sm text-primary mr-3 font-medium">English</button>
+                    <button id="lang-zh-btn" class="text-sm text-gray-500 mr-3">中文</button>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#about" class="text-gray-600 hover:text-primary text-sm font-medium transition-colors">
+                        <span class="lang-en">About</span>
+                        <span class="lang-zh">关于我</span>
+                    </a>
+                    <a href="#research" class="text-gray-600 hover:text-primary text-sm font-medium transition-colors">
+                        <span class="lang-en">Research</span>
+                        <span class="lang-zh">研究</span>
+                    </a>
+                    <a href="#publications" class="text-gray-600 hover:text-primary text-sm font-medium transition-colors">
+                        <span class="lang-en">Publications</span>
+                        <span class="lang-zh">发表论文</span>
+                    </a>
+                    <a href="#teaching" class="text-gray-600 hover:text-primary text-sm font-medium transition-colors">
+                        <span class="lang-en">Teaching</span>
+                        <span class="lang-zh">教学</span>
+                    </a>
+                    <a href="#news" class="text-gray-600 hover:text-primary text-sm font-medium transition-colors">
+                        <span class="lang-en">News</span>
+                        <span class="lang-zh">新闻</span>
+                    </a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="lang-mobile-btn" class="text-gray-600 hover:text-primary mr-4 text-sm">
+                        <span class="lang-en">中文</span>
+                        <span class="lang-zh">English</span>
+                    </button>
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-primary">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div class="container mx-auto px-4 py-3 space-y-2">
+                <a href="#about" class="block py-2 text-gray-600 hover:text-primary text-sm font-medium">
+                    <span class="lang-en">About</span>
+                    <span class="lang-zh">关于我</span>
+                </a>
+                <a href="#research" class="block py-2 text-gray-600 hover:text-primary text-sm font-medium">
+                    <span class="lang-en">Research</span>
+                    <span class="lang-zh">研究</span>
+                </a>
+                <a href="#publications" class="block py-2 text-gray-600 hover:text-primary text-sm font-medium">
+                    <span class="lang-en">Publications</span>
+                    <span class="lang-zh">发表论文</span>
+                </a>
+                <a href="#teaching" class="block py-2 text-gray-600 hover:text-primary text-sm font-medium">
+                    <span class="lang-en">Teaching</span>
+                    <span class="lang-zh">教学</span>
+                </a>
+                <a href="#news" class="block py-2 text-gray-600 hover:text-primary text-sm font-medium">
+                    <span class="lang-en">News</span>
+                    <span class="lang-zh">新闻</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="pt-20 pb-10">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center md:items-center gap-4 max-w-4xl mx-auto">
+                <!-- 东华大学校徽 -->
+                <div class="w-24 h-24 md:w-32 md:h-32 rounded overflow-hidden border border-gray-200 flex items-center justify-center bg-white p-2">
+                    <img src="https://picsum.photos/seed/dhu/300/300" alt="Donghua University Logo" class="w-full h-full object-contain">
+                </div>
+                <div class="text-center md:text-left">
+                    <h1 class="text-xl md:text-2xl font-bold text-primary mb-1">
+                        <span class="lang-en">[Your Name]</span>
+                        <span class="lang-zh">[你的名字]</span>
+                    </h1>
+                    <p class="text-sm text-gray-600 mb-1">
+                        <span class="lang-en">[Your Title]</span>
+                        <span class="lang-zh">[你的职称]</span>
+                    </p>
+                    <p class="text-sm text-gray-600 mb-1">
+                        <span class="lang-en">[Your Department]<br>Donghua University</span>
+                        <span class="lang-zh">[你的院系]<br>东华大学</span>
+                    </p>
+                    <!-- 邮箱地址 -->
+                    <p class="text-sm text-primary">
+                        <i class="fa fa-envelope-o mr-1"></i>
+                        <a href="mailto:your.email@dhu.edu.cn" class="hover:underline">
+                            <span class="lang-en">your.email@dhu.edu.cn</span>
+                            <span class="lang-zh">your.email@dhu.edu.cn</span>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-white section-fade">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+            <h2 class="text-2xl font-semibold mb-8 pb-2 border-b border-gray-200">
+                <span class="lang-en">About</span>
+                <span class="lang-zh">关于我</span>
+            </h2>
+            
+            <div class="prose max-w-none text-gray-700 lang-en active-lang">
+                <p class="mb-4">
+                    I am a [researcher/scholar/lecturer] working in the field of [your field] at Donghua University. My research focuses on [brief description of your main research interests and approaches].
+                </p>
+                <p>
+                    In addition to my research, I am passionate about teaching and education. I have taught various courses in [your field] at both undergraduate and graduate levels, aiming to inspire students and foster critical thinking.
+                </p>
+            </div>
+            
+            <div class="prose max-w-none text-gray-700 lang-zh">
+                <p class="mb-4">
+                    我是东华大学[你的领域]领域的[研究人员/学者/讲师]。我的研究主要集中在[你的主要研究兴趣和方法的简要描述]。
+                </p>
+                <p>
+                    除了研究工作外，我还热衷于教学和教育事业。我在本科和研究生阶段教授过[你的领域]的多门课程，旨在激发学生的学习兴趣和培养批判性思维能力。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Research Section -->
+    <section id="research" class="py-16 bg-gray-50 section-fade">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+            <h2 class="text-2xl font-semibold mb-8 pb-2 border-b border-gray-200">
+                <span class="lang-en">Research</span>
+                <span class="lang-zh">研究</span>
+            </h2>
+            
+            <div class="space-y-8 lang-en active-lang">
+                <div>
+                    <h3 class="text-lg font-medium mb-3 text-primary">Research Interests</h3>
+                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                        <li>Research area 1</li>
+                        <li>Research area 2</li>
+                        <li>Research area 3</li>
+                        <li>Research area 4</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-medium mb-3 text-primary">Current Projects</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded border border-gray-100">
+                            <h4 class="font-medium mb-1">Project Title 1</h4>
+                            <p class="text-sm text-gray-600">Brief description of the project and its goals.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border border-gray-100">
+                            <h4 class="font-medium mb-1">Project Title 2</h4>
+                            <p class="text-sm text-gray-600">Brief description of the project and its goals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-8 lang-zh">
+                <div>
+                    <h3 class="text-lg font-medium mb-3 text-primary">研究兴趣</h3>
+                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                        <li>研究领域一</li>
+                        <li>研究领域二</li>
+                        <li>研究领域三</li>
+                        <li>研究领域四</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-medium mb-3 text-primary">当前项目</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded border border-gray-100">
+                            <h4 class="font-medium mb-1">项目名称一</h4>
+                            <p class="text-sm text-gray-600">项目的简要描述及其目标。</p>
+                        </div>
+                        <div class="bg-white p-4 rounded border border-gray-100">
+                            <h4 class="font-medium mb-1">项目名称二</h4>
+                            <p class="text-sm text-gray-600">项目的简要描述及其目标。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Publications Section -->
+    <section id="publications" class="py-16 bg-white section-fade">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+            <h2 class="text-2xl font-semibold mb-8 pb-2 border-b border-gray-200">
+                <span class="lang-en">Publications</span>
+                <span class="lang-zh">发表论文</span>
+            </h2>
+            
+            <!-- Publication filters -->
+            <div class="flex flex-wrap gap-2 mb-8 lang-en active-lang">
+                <button class="pub-filter px-3 py-1 bg-primary text-white text-xs rounded active">All</button>
+                <button class="pub-filter px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded">Journal Articles</button>
+                <button class="pub-filter px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded">Conference Papers</button>
+                <button class="pub-filter px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded">Book Chapters</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-8 lang-zh">
+                <button class="pub-filter px-3 py-1 bg-primary text-white text-xs rounded active">全部</button>
+                <button class="pub-filter px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded">期刊论文</button>
+                <button class="pub-filter px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded">会议论文</button>
+                <button class="pub-filter px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded">书籍章节</button>
+            </div>
+            
+            <!-- Publications list -->
+            <div class="space-y-6 lang-en active-lang">
+                <!-- Publication 1 -->
+                <div class="pub-item">
+                    <h3 class="font-medium mb-1">
+                        <a href="#" class="text-primary hover:underline">Title of your first publication</a>
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-1">
+                        <span class="font-medium">Your Name</span>, Co-author 1, Co-author 2
+                    </p>
+                    <p class="text-sm text-gray-500 italic mb-2">
+                        <em>Journal Name</em>, Volume X, Issue Y, Pages Z-ZZ, Year
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-file-pdf-o mr-1"></i> PDF
+                        </a>
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-external-link mr-1"></i> DOI
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Publication 2 -->
+                <div class="pub-item">
+                    <h3 class="font-medium mb-1">
+                        <a href="#" class="text-primary hover:underline">Title of your second publication</a>
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-1">
+                        Co-author 1, <span class="font-medium">Your Name</span>, Co-author 2
+                    </p>
+                    <p class="text-sm text-gray-500 italic mb-2">
+                        <em>Conference Name</em>, Year
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-file-pdf-o mr-1"></i> PDF
+                        </a>
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-external-link mr-1"></i> DOI
+                        </a>
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-code mr-1"></i> Code
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-6 lang-zh">
+                <!-- Publication 1 -->
+                <div class="pub-item">
+                    <h3 class="font-medium mb-1">
+                        <a href="#" class="text-primary hover:underline">你的第一篇论文标题</a>
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-1">
+                        <span class="font-medium">你的名字</span>，合作者一，合作者二
+                    </p>
+                    <p class="text-sm text-gray-500 italic mb-2">
+                        <em>期刊名称</em>，第X卷，第Y期，第Z-ZZ页，年份
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-file-pdf-o mr-1"></i> PDF
+                        </a>
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-external-link mr-1"></i> DOI
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Publication 2 -->
+                <div class="pub-item">
+                    <h3 class="font-medium mb-1">
+                        <a href="#" class="text-primary hover:underline">你的第二篇论文标题</a>
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-1">
+                        合作者一，<span class="font-medium">你的名字</span>，合作者二
+                    </p>
+                    <p class="text-sm text-gray-500 italic mb-2">
+                        <em>会议名称</em>，年份
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-file-pdf-o mr-1"></i> PDF
+                        </a>
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-external-link mr-1"></i> DOI
+                        </a>
+                        <a href="#" class="text-xs text-gray-600 hover:text-primary flex items-center">
+                            <i class="fa fa-code mr-1"></i> 代码
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 lang-en active-lang">
+                <a href="#" class="text-primary hover:underline text-sm font-medium">
+                    View complete list of publications <i class="fa fa-arrow-right ml-1 text-xs"></i>
+                </a>
+            </div>
+            
+            <div class="mt-8 lang-zh">
+                <a href="#" class="text-primary hover:underline text-sm font-medium">
+                    查看完整论文列表 <i class="fa fa-arrow-right ml-1 text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Teaching Section -->
+    <section id="teaching" class="py-16 bg-gray-50 section-fade">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+            <h2 class="text-2xl font-semibold mb-8 pb-2 border-b border-gray-200">
+                <span class="lang-en">Teaching</span>
+                <span class="lang-zh">教学</span>
+            </h2>
+            
+            <div class="lang-en active-lang">
+                <p class="mb-6 text-gray-700">
+                    I am currently teaching the following courses at Donghua University. Course materials are available for students.
+                </p>
+                
+                <!-- Current Courses -->
+                <div>
+                    <h3 class="text-lg font-medium mb-4 text-primary">Current Courses</h3>
+                    <div class="space-y-4">
+                        <!-- Course 1 -->
+                        <div class="course-item bg-white p-5 rounded border border-gray-100">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-medium mb-1">CS 101: Introduction to Computer Science</h4>
+                                    <p class="text-sm text-gray-600 mb-2">Undergraduate • Fall 2023</p>
+                                    <p class="text-sm text-gray-700">An introductory course covering fundamental concepts of computer science, including programming, algorithms, and data structures.</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Current</span>
+                            </div>
+                            
+                            <!-- Course Materials -->
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <p class="text-sm font-medium mb-2">Course Materials:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-pdf-o mr-1"></i> Syllabus
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-powerpoint-o mr-1"></i> Lectures
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-text-o mr-1"></i> Assignments
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-link mr-1"></i> Course Page
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Course 2 -->
+                        <div class="course-item bg-white p-5 rounded border border-gray-100">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-medium mb-1">CS 450: Advanced Machine Learning</h4>
+                                    <p class="text-sm text-gray-600 mb-2">Graduate • Fall 2023</p>
+                                    <p class="text-sm text-gray-700">A advanced course focusing on modern machine learning algorithms, neural networks, and their applications in various domains.</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Current</span>
+                            </div>
+                            
+                            <!-- Course Materials -->
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <p class="text-sm font-medium mb-2">Course Materials:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-pdf-o mr-1"></i> Syllabus
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-powerpoint-o mr-1"></i> Lectures
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-github mr-1"></i> Code
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lang-zh">
+                <p class="mb-6 text-gray-700">
+                    我目前在东华大学教授以下课程。学生可以获取相关课程资料。
+                </p>
+                
+                <!-- Current Courses -->
+                <div>
+                    <h3 class="text-lg font-medium mb-4 text-primary">当前课程</h3>
+                    <div class="space-y-4">
+                        <!-- Course 1 -->
+                        <div class="course-item bg-white p-5 rounded border border-gray-100">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-medium mb-1">计算机科学导论</h4>
+                                    <p class="text-sm text-gray-600 mb-2">本科 • 2023年秋季学期</p>
+                                    <p class="text-sm text-gray-700">一门介绍性课程，涵盖计算机科学的基本概念，包括编程、算法和数据结构。</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">当前</span>
+                            </div>
+                            
+                            <!-- Course Materials -->
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <p class="text-sm font-medium mb-2">课程资料：</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-pdf-o mr-1"></i> 教学大纲
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-powerpoint-o mr-1"></i> 课件
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-text-o mr-1"></i> 作业
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-link mr-1"></i> 课程页面
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Course 2 -->
+                        <div class="course-item bg-white p-5 rounded border border-gray-100">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-medium mb-1">高级机器学习</h4>
+                                    <p class="text-sm text-gray-600 mb-2">研究生 • 2023年秋季学期</p>
+                                    <p class="text-sm text-gray-700">一门高级课程，重点介绍现代机器学习算法、神经网络及其在各个领域的应用。</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">当前</span>
+                            </div>
+                            
+                            <!-- Course Materials -->
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <p class="text-sm font-medium mb-2">课程资料：</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-pdf-o mr-1"></i> 教学大纲
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-file-powerpoint-o mr-1"></i> 课件
+                                    </a>
+                                    <a href="#" class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 flex items-center transition-colors">
+                                        <i class="fa fa-github mr-1"></i> 代码
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section (新增) -->
+    <section id="news" class="py-16 bg-white section-fade">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+            <h2 class="text-2xl font-semibold mb-8 pb-2 border-b border-gray-200">
+                <span class="lang-en">Latest News</span>
+                <span class="lang-zh">最新动态</span>
+            </h2>
+            
+            <!-- 新闻示例 -->
+            <div class="news-card bg-gray-50 rounded-lg overflow-hidden shadow-sm border border-gray-100 mb-6">
+                <div class="lang-en active-lang">
+                    <!-- 新闻图片 -->
+                    <div class="w-full h-56 md:h-64 overflow-hidden">
+                        <img src="https://picsum.photos/seed/research/800/400" alt="International Conference on Advanced Materials Science" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Conference</span>
+                            <time class="text-sm text-gray-500">June 15, 2023</time>
+                        </div>
+                        
+                        <h3 class="text-xl font-semibold mb-3 text-primary">Our Research Team Presented Latest Findings at International Conference</h3>
+                        
+                        <p class="text-gray-700 mb-4">
+                            Our research team recently attended the International Conference on Advanced Materials Science in Shanghai, where we presented our latest findings on sustainable textile materials. The presentation received positive feedback from experts in the field.
+                        </p>
+                        
+                        <!-- 视频占位符 -->
+                        <div class="mb-4">
+                            <p class="text-sm font-medium mb-2">Conference Presentation Highlights:</p>
+                            <div class="video-container rounded">
+                                <div class="video-placeholder">
+                                    <div class="play-button"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="mr-4"><i class="fa fa-user-o mr-1"></i> Presented by Dr. [Your Name]</span>
+                            <span><i class="fa fa-map-marker mr-1"></i> Shanghai International Convention Center</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lang-zh">
+                    <!-- 新闻图片 -->
+                    <div class="w-full h-56 md:h-64 overflow-hidden">
+                        <img src="https://picsum.photos/seed/research/800/400" alt="国际先进材料科学会议" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">学术会议</span>
+                            <time class="text-sm text-gray-500">2023年6月15日</time>
+                        </div>
+                        
+                        <h3 class="text-xl font-semibold mb-3 text-primary">我研究团队在国际会议上发布最新研究成果</h3>
+                        
+                        <p class="text-gray-700 mb-4">
+                            我研究团队近期参加了在上海举办的国际先进材料科学会议，展示了关于可持续纺织材料的最新研究成果。该报告获得了领域内专家的积极评价。
+                        </p>
+                        
+                        <!-- 视频占位符 -->
+                        <div class="mb-4">
+                            <p class="text-sm font-medium mb-2">会议报告亮点：</p>
+                            <div class="video-container rounded">
+                                <div class="video-placeholder">
+                                    <div class="play-button"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="mr-4"><i class="fa fa-user-o mr-1"></i> 报告人：[你的名字] 博士</span>
+                            <span><i class="fa fa-map-marker mr-1"></i> 上海国际会议中心</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 查看更多链接 -->
+            <div class="text-center lang-en active-lang">
+                <a href="#" class="inline-flex items-center text-primary hover:underline font-medium">
+                    View all news <i class="fa fa-long-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="text-center lang-zh">
+                <a href="#" class="inline-flex items-center text-primary hover:underline font-medium">
+                    查看所有动态 <i class="fa fa-long-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-8 border-t border-gray-200">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-600">
+                    <span class="lang-en">© [Current Year] [Your Name]. All rights reserved.</span>
+                    <span class="lang-zh">© [当前年份] [你的名字] 版权所有。</span>
+                </p>
+                <p class="text-sm text-gray-500 mt-2 md:mt-0">
+                    <span class="lang-en">Last updated: [Month Year]</span>
+                    <span class="lang-zh">最后更新: [年月]</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language switch functionality
+        const langEnBtn = document.getElementById('lang-en-btn');
+        const langZhBtn = document.getElementById('lang-zh-btn');
+        const langMobileBtn = document.getElementById('lang-mobile-btn');
+        const langEnElements = document.querySelectorAll('.lang-en');
+        const langZhElements = document.querySelectorAll('.lang-zh');
+        
+        function switchToEnglish() {
+            langEnElements.forEach(el => {
+                el.classList.add('active-lang');
+                el.classList.remove('inactive-lang');
+            });
+            langZhElements.forEach(el => {
+                el.classList.remove('active-lang');
+                el.classList.add('inactive-lang');
+            });
+            langEnBtn.classList.add('text-primary');
+            langEnBtn.classList.remove('text-gray-500');
+            langZhBtn.classList.remove('text-primary');
+            langZhBtn.classList.add('text-gray-500');
+        }
+        
+        function switchToChinese() {
+            langZhElements.forEach(el => {
+                el.classList.add('active-lang');
+                el.classList.remove('inactive-lang');
+            });
+            langEnElements.forEach(el => {
+                el.classList.remove('active-lang');
+                el.classList.add('inactive-lang');
+            });
+            langZhBtn.classList.add('text-primary');
+            langZhBtn.classList.remove('text-gray-500');
+            langEnBtn.classList.remove('text-primary');
+            langEnBtn.classList.add('text-gray-500');
+        }
+        
+        langEnBtn.addEventListener('click', switchToEnglish);
+        langZhBtn.addEventListener('click', switchToChinese);
+        langMobileBtn.addEventListener('click', () => {
+            if (langEnElements[0].classList.contains('active-lang')) {
+                switchToChinese();
+            } else {
+                switchToEnglish();
+            }
+        });
+        
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Close mobile menu when clicking on a link
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+        
+        // Publication filter functionality
+        const pubFilters = document.querySelectorAll('.pub-filter');
+        
+        pubFilters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                // Remove active class from all filters
+                pubFilters.forEach(f => {
+                    f.classList.remove('bg-primary', 'text-white', 'active');
+                    f.classList.add('bg-gray-200', 'text-gray-700');
+                });
+                
+                // Add active class to clicked filter
+                filter.classList.remove('bg-gray-200', 'text-gray-700');
+                filter.classList.add('bg-primary', 'text-white', 'active');
+            });
+        });
+        
+        // Scroll animation for sections
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('section-visible');
+                }
+            });
+        }, observerOptions);
+        
+        const sections = document.querySelectorAll('.section-fade');
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+        
+        // 视频播放按钮交互
+        const videoContainers = document.querySelectorAll('.video-container');
+        videoContainers.forEach(container => {
+            container.addEventListener('click', () => {
+                alert('Video playback would start here in a production environment');
+            });
+        });
+    </script>
+</body>
+</html>
